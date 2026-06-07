@@ -213,3 +213,33 @@ for i,app in enumerate(apps):
 result_df = pd.concat(result,ignore_index=True)
 print(result_df) 
 print(df_clean.duplicated(subset=["Category","App"]).sum())
+
+#top 5 rating apps
+print("-"*30,"top 5 rating apps","-"*30)
+rating_df = df_clean.groupby(["Category","Installs","App"])["Rating"].sum().reset_index().sort_values('Installs',ascending=False)
+print(rating_df[rating_df["Rating"]==5])
+
+#column ' Android Ver' control
+print("-"*30,"column ' Android Ver' control","-"*30)
+print(df_clean['Android Ver'].value_counts())
+print("-"*30,"cleaning 'and up' to '' ","-"*30)
+df_clean['Android Ver'] = df_clean['Android Ver'].replace('and up','',regex=True).replace('W','',regex=True)
+df_clean['Android Ver'] = df_clean['Android Ver'].replace('Varies with device',pd.NA,regex=True)
+print(df_clean['Android Ver'].unique())
+print("-"*30,"cleaning '-' data contained in col:'Android Ver' ","-"*30)
+df_clean = df_clean[df_clean["Android Ver"].str.contains('-')==False]
+print(df_clean['Android Ver'].value_counts())
+print(df_clean.shape)
+
+print("="*30,"ENCODING","="*30)
+
+print(df_clean['Genres'].unique())
+print("-"*30,"Replace data values to mean values of installs in col Genres ' ","-"*30)
+mean_genres_installs = df_clean.groupby('Genres')['Installs'].mean()/1000000
+print(mean_genres_installs)
+print("convert a pandas series to a dictionary")
+mean_genres_installs = mean_genres_installs.to_dict()
+print(mean_genres_installs)
+print("Encoding a dictionary to a dataframe column by using map method:")
+df_clean['Genres Encoded']  = df_clean['Genres'].map(mean_genres_installs)
+print(df_clean.head(10))
