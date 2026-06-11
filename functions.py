@@ -33,3 +33,10 @@ def column_unique(df):
         columns=["Column","Unique_Count","Duplicate_Count"]
     )
     return result
+
+
+def data_review(data:pd.DataFrame):
+    print(data.columns)
+    print(data.head())
+    print(data_info(data))
+    print(data.describe())
