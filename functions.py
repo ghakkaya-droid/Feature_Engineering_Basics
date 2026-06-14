@@ -40,3 +40,18 @@ def data_review(data:pd.DataFrame):
     print(data.head())
     print(data_info(data))
     print(data.describe())
+
+def value_counter(data:pd.DataFrame,col):
+    print("-"*100)
+    print(data[col].value_counts())
+    print(f"Unique value count: {len(data[col].value_counts())}")
+    print("-"*100)
+
+def numeric_encoding (data:pd.DataFrame,col):
+    print("{col} column unique values:")
+    print(data[col].value_counts())
+    keys_list = data[col].value_counts().index.tolist()
+    user_input = input("Define the indices based on the order of unique values with comma")
+    value_list = user_input.split(",")
+    dictionary = dict(zip(keys_list,value_list))
+    data[col] = data[col].replace(dictionary)
