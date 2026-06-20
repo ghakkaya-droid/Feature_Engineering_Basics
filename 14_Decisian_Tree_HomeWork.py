@@ -42,6 +42,11 @@ df_org = df.copy()
 deleting_list=['Bilmiyorum','-']
 delete_idx = df[df['CCM'].isin(deleting_list)].index
 df = df.drop(index=delete_idx)
+dublicated_data_count = df[df.duplicated()].shape[0]
+if dublicated_data_count !=0:
+    print(f"Dublicated data count: {dublicated_data_count}")
+    df=df.drop_duplicates()
+    print(f"control: {df.duplicated().sum()}")
 
 #CCM Replacement
 ccm_keys = df['CCM'].value_counts().index.to_list()
