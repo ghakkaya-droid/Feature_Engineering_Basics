@@ -50,13 +50,16 @@ for col in col_2_fill:
     X_train[col] = X_train[col].replace(0,col_median)
 for col in col_2_fill:
     X_test[col] = X_test[col].replace(0,medians_dict[col])
-
+columns_list = X_train.columns
 print(X_train.describe())
 
 print("="*30,"Standard Scaling (for AdaBoost it not necessery to scale)","="*30)
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
+X_train = pd.DataFrame(X_train,columns=columns_list)
+X_test=pd.DataFrame(X_test,columns=columns_list)
+print(X_train)
 print("Scaling X_tain, X_test completed ...")
 print("="*30,"Adaboost Solutions","="*30)
 ada = AdaBoostClassifier()
@@ -114,7 +117,40 @@ for name,model in models.items():
     result_score_dict = {
         "model":name,
         "train score":model_train_score,
-        "test score":model_test_score
+        "test score":model_test_score,
+        "Dropping":"Not Dropped"
+    }
+    result_scores.append(result_score_dict)
+    print(name)
+    print("Evaluation for Training Set")
+    print(model_train_report)
+    print(model_train_score)
+    print(model_train_matrix)
+    print("-"*60)
+    print("Evaluation for Test Set")
+    print(model_test_report)
+    print(model_test_score)
+    print(model_test_matrix)
+    print("-"*60)
+result_score_df = pd.DataFrame(result_scores)
+print(result_score_df.sort_values('test score'))
+
+
+print("="*30,"Dropping columns:'SkinThickness' and 'Insulin'","="*30)
+X_train = X_train.drop(['SkinThickness','Insulin'],axis=1)
+X_test = X_test.drop(['SkinThickness','Insulin'],axis=1)
+
+for name,model in models.items():
+    model.fit(X_train,y_train)
+    y_trian_pred = model.predict(X_train)
+    y_test_pred = model.predict(X_test)
+    model_train_report,model_train_score,model_train_matrix = calculate_model_metrics(y_train,y_trian_pred)
+    model_test_report,model_test_score,model_test_matrix = calculate_model_metrics(y_test,y_test_pred)
+    result_score_dict = {
+        "model":name,
+        "train score":model_train_score,
+        "test score":model_test_score,
+        "Dropping":"Dropped"
     }
     result_scores.append(result_score_dict)
     print(name)

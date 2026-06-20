@@ -1,6 +1,13 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
+from sklearn.metrics import mean_absolute_error
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import r2_score
+from sklearn.metrics import classification_report
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
 
 
 def data_info(data):
@@ -55,3 +62,16 @@ def numeric_encoding (data:pd.DataFrame,col):
     value_list = user_input.split(",")
     dictionary = dict(zip(keys_list,value_list))
     data[col] = data[col].replace(dictionary)
+
+def calculate_model_metrics_reg (true,predict):
+    mae = mean_absolute_error(true,predict)
+    mse = mean_squared_error(true,predict)
+    rmse = np.sqrt(mean_squared_error(true,predict))
+    score_r2 = r2_score(true,predict)
+    return mae,rmse,score_r2
+
+def calculate_model_metrics_cls (true,predict):
+    cls_report = classification_report(true,predict)
+    acc_score = accuracy_score(true,predict)
+    conf_matrix = confusion_matrix(true,predict)
+    return cls_report,acc_score,conf_matrix 
